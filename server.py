@@ -15,9 +15,10 @@ app.config["DYNAMO_TABLES"] = [
 ]
 
 dynamo = Dynamo(app)
+
 @app.route("/")
 def slash():
-    return "something here"
+    return "something else will be here"
 
 # to send to this route: /api/all_by_user/?username={username}
 @app.route("/api/all_by_user/")
@@ -56,6 +57,7 @@ def fetch_all():
     return jsonify(response)
 
 if __name__ == "__main__":
-    with app.app_context():
-        dynamo.create_all()
+   # comment in these lines to create the table the first time
+   # with app.app_context():
+   #     dynamo.create_all()
     app.run(debug=True, host="0.0.0.0", port=80)
