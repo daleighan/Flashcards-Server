@@ -8,8 +8,8 @@ app = Flask(__name__)
 app.config['DYNAMO_TABLES'] = [
     {
          "TableName":"Flashcards",
-         "KeySchema":[dict(AttributeName="username", KeyType='HASH')],
-         "AttributeDefinitions":[dict(AttributeName="username", AttributeType="S"), dict(AttributeName="category", AttributeType="S"), dict(AttributeName="front", AttributeType="S"), dict(AttributeName="back", AttributeType="S")],
+         "KeySchema":[dict(AttributeName="id", KeyType="HASH")],
+         "AttributeDefinitions":[dict(AttributeName="id", AttributeType="N") ],
          "ProvisionedThroughput":dict(ReadCapacityUnits=5, WriteCapacityUnits=5)
     }
 ]
@@ -26,6 +26,7 @@ def add_card():
         abort(400)
     print(request.json)
     dynamo.tables["Flashcards"].put_item(Item={
+        "id": request.json["id"],
         "username": request.json["username"],
         "category": request.json["category"],
         "front": request.json["front"],
