@@ -15,6 +15,9 @@ app.config["DYNAMO_TABLES"] = [
 ]
 
 dynamo = Dynamo(app)
+@app.route("/")
+def slash():
+    return "something here"
 
 # to send to this route: /api/all_by_user/?username={username}
 @app.route("/api/all_by_user/")
