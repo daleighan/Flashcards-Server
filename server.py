@@ -1,10 +1,11 @@
 from flask import Flask, request, abort, jsonify
 import dynamo_info
 from flask_dynamo import Dynamo
+from boto3.dynamodb.conditions import Key, Attr
 
 app = Flask(__name__)
 
-app.config['DYNAMO_TABLES'] = [
+app.config["DYNAMO_TABLES"] = [
     {
          "TableName":"Flashcards",
          "KeySchema":[dict(AttributeName="front+name", KeyType="HASH")],
@@ -15,11 +16,18 @@ app.config['DYNAMO_TABLES'] = [
 
 dynamo = Dynamo(app)
 
+# to send to this route: /api/all_by_user/?username={username}
+@app.route("/api/all_by_user/")
+def get_all_by_user():
+    response = dynamo.tables["Flashcards"].scan(
+        FilterExpression=Attr('username').eq(request.args["username"])
+    )
+    return jsonify(response)
+
 @app.route("/api/add_card", methods=["POST"])
 def add_card():
     if not request.json:
         abort(400)
-    print(request.json)
     dynamo.tables["Flashcards"].put_item(Item={
         "username": request.json["username"],
         "category": request.json["category"],
@@ -27,11 +35,6 @@ def add_card():
         "back": request.json["back"]
     })
     return jsonify(request.json)
-
-@app.route("/api/fetch_all")
-def fetch_all():
-    response = dynamo.tables["Flashcards"].scan()
-    return jsonify(response)
 
 @app.route("/api/delete_one", methods=["POST"])
 def delete_card():
@@ -43,6 +46,11 @@ def delete_card():
         }
     )
     return jsonify({ "card deleted" : request.json["front"]})
+
+@app.route("/api/fetch_all")
+def fetch_all():
+    response = dynamo.tables["Flashcards"].scan()
+    return jsonify(response)
 
 if __name__ == "__main__":
     with app.app_context():
