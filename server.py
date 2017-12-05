@@ -7,8 +7,8 @@ app = Flask(__name__)
 app.config['DYNAMO_TABLES'] = [
     {
          "TableName":"Flashcards",
-         "KeySchema":[dict(AttributeName="front", KeyType="HASH")],
-         "AttributeDefinitions":[dict(AttributeName="front", AttributeType="S")],
+         "KeySchema":[dict(AttributeName="front+name", KeyType="HASH")],
+         "AttributeDefinitions":[dict(AttributeName="front+name", AttributeType="S")],
          "ProvisionedThroughput":dict(ReadCapacityUnits=5, WriteCapacityUnits=5)
     }
 ]
@@ -23,7 +23,7 @@ def add_card():
     dynamo.tables["Flashcards"].put_item(Item={
         "username": request.json["username"],
         "category": request.json["category"],
-        "front": request.json["front"],
+        "front+name": request.json["front"] + "-" + request.json["username"],
         "back": request.json["back"]
     })
     return jsonify(request.json)
@@ -32,6 +32,17 @@ def add_card():
 def fetch_all():
     response = dynamo.tables["Flashcards"].scan()
     return jsonify(response)
+
+@app.route("/api/delete_one", methods=["POST"])
+def delete_card():
+    if not request.json:
+        abort(400)
+    dynamo.tables["Flashcards"].delete_item(
+        Key = {
+            "front+name": request.json["front"] + "-" + request.json["username"]
+        }
+    )
+    return jsonify({ "card deleted" : request.json["front"]})
 
 if __name__ == "__main__":
     with app.app_context():
