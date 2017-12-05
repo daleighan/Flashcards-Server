@@ -1,7 +1,8 @@
 from flask import Flask, request, abort, jsonify
-#import dynamo_info
+import dynamo_info
 from flask_dynamo import Dynamo
 from boto3.dynamodb.conditions import Key, Attr
+import os
 
 app = Flask(__name__)
 
@@ -57,7 +58,6 @@ def fetch_all():
     return jsonify(response)
 
 if __name__ == "__main__":
-   # comment in these lines to create the table the first time
     with app.app_context():
         dynamo.create_all()
     app.run(debug=True, host="0.0.0.0", port=80)
