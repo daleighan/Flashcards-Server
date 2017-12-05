@@ -1,24 +1,19 @@
 from flask import Flask, request, abort, jsonify
 import dynamo_info
 from flask_dynamo import Dynamo
-import os
 
 app = Flask(__name__)
 
 app.config['DYNAMO_TABLES'] = [
     {
          "TableName":"Flashcards",
-         "KeySchema":[dict(AttributeName="id", KeyType="HASH")],
-         "AttributeDefinitions":[dict(AttributeName="id", AttributeType="N") ],
+         "KeySchema":[dict(AttributeName="front", KeyType="HASH")],
+         "AttributeDefinitions":[dict(AttributeName="front", AttributeType="S")],
          "ProvisionedThroughput":dict(ReadCapacityUnits=5, WriteCapacityUnits=5)
     }
 ]
 
 dynamo = Dynamo(app)
-
-@app.route("/")
-def hello_world():
-    return "Hello World"
 
 @app.route("/api/add_card", methods=["POST"])
 def add_card():
@@ -26,13 +21,17 @@ def add_card():
         abort(400)
     print(request.json)
     dynamo.tables["Flashcards"].put_item(Item={
-        "id": request.json["id"],
         "username": request.json["username"],
         "category": request.json["category"],
         "front": request.json["front"],
         "back": request.json["back"]
     })
-    return "Card Posted"
+    return jsonify(request.json)
+
+@app.route("/api/fetch_all")
+def fetch_all():
+    response = dynamo.tables["Flashcards"].scan()
+    return jsonify(response)
 
 if __name__ == "__main__":
     with app.app_context():
