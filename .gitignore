@@ -2,4 +2,9 @@ dynamo_info.py
 *.swp
 *.swo
 *.swn
-
+__pycache__
+.Python
+bin
+include
+lib
+pip-selfcheck.json
