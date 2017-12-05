@@ -24,7 +24,13 @@ def hello_world():
 def add_card():
     if not request.json:
         abort(400)
-    print('eyo')
+    print(request.json)
+    dynamo.tables["Flashcards"].put_item(Item={
+        "username": request.json["username"],
+        "category": request.json["category"],
+        "front": request.json["front"],
+        "back": request.json["back"]
+    })
     return "Card Posted"
 
 if __name__ == "__main__":
