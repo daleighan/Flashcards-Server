@@ -8,8 +8,8 @@ app = Flask(__name__)
 app.config['DYNAMO_TABLES'] = [
     {
          "TableName":"Flashcards",
-         "KeySchema":[dict(AttributeName="id", KeyType='HASH')],
-         "AttributeDefinitions":[dict(AttributeName="username", AttributeType="S"), dict(AttributeName="category", AttributeType="S"), dict(AttributeName="front", type="S"), dict(AttributeName="back", type="S")],
+         "KeySchema":[dict(AttributeName="username", KeyType='HASH')],
+         "AttributeDefinitions":[dict(AttributeName="username", AttributeType="S"), dict(AttributeName="category", AttributeType="S"), dict(AttributeName="front", AttributeType="S"), dict(AttributeName="back", AttributeType="S")],
          "ProvisionedThroughput":dict(ReadCapacityUnits=5, WriteCapacityUnits=5)
     }
 ]
