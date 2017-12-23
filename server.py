@@ -37,7 +37,9 @@ def add_card():
         "username": request.json["username"],
         "category": request.json["category"],
         "front+name": request.json["front"] + "-" + request.json["username"],
-        "back": request.json["back"]
+        "username": request.json["username"],
+        "front": request.json["front"],
+        "back": request.json["back"],
     })
     return jsonify(request.json)
 
@@ -50,7 +52,7 @@ def delete_card():
             "front+name": request.json["front"] + "-" + request.json["username"]
         }
     )
-    return jsonify({ "card deleted" : request.json["front"]})
+    return jsonify({ "card deleted" : request.json["front"] })
 
 @app.route("/api/fetch_all")
 def fetch_all():
