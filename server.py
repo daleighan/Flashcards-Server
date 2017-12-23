@@ -1,5 +1,5 @@
 from flask import Flask, request, abort, jsonify
-import dynamo_info
+#import dynamo_info
 from flask_dynamo import Dynamo
 from boto3.dynamodb.conditions import Key, Attr
 import os
