@@ -40,6 +40,7 @@ def add_card():
         "username": request.json["username"],
         "front": request.json["front"],
         "back": request.json["back"],
+        "archived": request.json["archived"]
     })
     return jsonify(request.json)
 
