@@ -9,8 +9,8 @@ app = Flask(__name__)
 app.config["DYNAMO_TABLES"] = [
     {
          "TableName":"Flashcards",
-         "KeySchema":[dict(AttributeName="front+name", KeyType="HASH")],
-         "AttributeDefinitions":[dict(AttributeName="front+name", AttributeType="S")],
+         "KeySchema":[dict(AttributeName="front+category+name", KeyType="HASH")],
+         "AttributeDefinitions":[dict(AttributeName="front+category+name", AttributeType="S")],
          "ProvisionedThroughput":dict(ReadCapacityUnits=5, WriteCapacityUnits=5)
     }
 ]
@@ -36,7 +36,7 @@ def add_card():
     dynamo.tables["Flashcards"].put_item(Item={
         "username": request.json["username"],
         "category": request.json["category"],
-        "front+name": request.json["front"] + "-" + request.json["username"],
+        "front+category+name": request.json["front"] + "-" + request.json["category"]+ "-" + request.json["username"],
         "username": request.json["username"],
         "front": request.json["front"],
         "back": request.json["back"],
@@ -50,7 +50,7 @@ def delete_card():
         abort(400)
     dynamo.tables["Flashcards"].delete_item(
         Key = {
-            "front+name": request.json["front"] + "-" + request.json["username"]
+            "front+category+name": request.json["front"] + "-" + request.json["category"] + "-" + request.json["username"]
         }
     )
     return jsonify({ "card deleted" : request.json["front"] })
